@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#a8dfff">
+<title>PIXEL ARCHIVE</title>
+<style>
+:root{--main:#79c9f4;--deep:#287ba9;--pale:#eaf8ff;--ink:#24445b;--paper:#fff}
+*{box-sizing:border-box}
+body{margin:0;background-color:var(--pale);background-image:radial-gradient(#8bcff2 1px,transparent 1px),linear-gradient(135deg,#f9fdff,#e6f6ff);background-size:14px 14px,auto;color:var(--ink);font-family:Verdana,"Arial",sans-serif}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+.wrap{max-width:980px;margin:auto;padding:14px}
+header{border:3px double var(--deep);background:var(--paper);box-shadow:5px 5px 0 #9bcfea;padding:18px 14px;text-align:center;position:relative;overflow:hidden}
+header:before,header:after{content:"★";position:absolute;color:var(--main);font-size:42px;opacity:.65}
+header:before{left:12px;top:4px}header:after{right:12px;bottom:0}
+.logo{font-family:"Courier New",monospace;font-weight:900;letter-spacing:2px;font-size:clamp(26px,7vw,48px);color:var(--deep);text-shadow:2px 2px 0 #cceeff}
+.reading{font-size:12px;letter-spacing:4px;margin-top:2px}
+.tagline{font-size:11px;margin-top:10px;color:#64869b}
+.decor{color:var(--deep);font-size:17px;letter-spacing:5px;margin:8px 0}
+nav{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}
+nav button,.btn{border:2px solid var(--deep);background:#fff;padding:9px 13px;box-shadow:3px 3px 0 #a7d7ee;font-weight:bold;font-size:13px}
+nav button.active,.btn.primary{background:var(--main);color:#123d59}
+main{background:#ffffffed;border:2px solid var(--deep);padding:16px;box-shadow:5px 5px 0 #a7d7ee;min-height:350px}
+h2{font-size:18px;border-bottom:2px dashed var(--main);padding-bottom:9px;margin:0 0 14px}
+h3{font-size:14px;margin:0 0 8px}
+.small{font-size:11px;color:#68879a}
+.panel{border:1px solid #9acfe9;background:#f8fdff;padding:12px;margin:10px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+label{display:block;font-size:12px;font-weight:bold;margin:9px 0 4px}
+input,textarea,select{width:100%;border:1px solid #9abed1;background:white;padding:9px;border-radius:2px}
+textarea{min-height:76px;resize:vertical}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.item{border:1px solid #a7cfe1;background:#fff;padding:12px;margin:8px 0;display:flex;justify-content:space-between;gap:12px;align-items:center}
+.item strong{display:block;font-size:14px}.item p{font-size:11px;margin:4px 0 0;color:#64869b}
+.item button{border:1px solid var(--deep);background:#f1faff;padding:6px 9px}
+.empty{text-align:center;padding:35px 10px;color:#7292a5;font-size:13px}
+footer{text-align:center;font-size:10px;color:#6f91a5;padding:18px}
+hr{border:0;border-top:1px dashed #9acfe9;margin:14px 0}
+.hidden{display:none!important}
+.pill{display:inline-block;background:var(--pale);border:1px solid var(--main);padding:3px 7px;font-size:10px;margin:3px}
+.status{font-size:11px;color:#4e829d}
+@media(max-width:520px){.wrap{padding:9px}main{padding:12px}nav button{flex:1}.item{align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="logo">PIXEL ARCHIVE</div>
+  <div class="reading">ぴくせる あーかいぶ</div>
+  <div class="decor">♪　★　♪</div>
+  <div class="tagline">MY CHARACTERS / MY UNIVERSE / MY ARCHIVE</div>
+</header>
+<nav aria-label="メニュー">
+  <button class="active" data-tab="home">トップ</button>
+  <button data-tab="characters">キャラクター</button>
+  <button data-tab="relations">関係性</button>
+  <button data-tab="music">イメージソング</button>
+  <button data-tab="settings">設定・保存</button>
+</nav>
+<main>
+<section id="home">
+  <h2>★ MY ARCHIVE</h2>
+  <p>自分だけの創作アーカイブをつくろう。</p>
+  <div class="grid">
+    <div class="panel"><h3>CHARACTERS</h3><div id="countChars" style="font-size:28px;font-weight:bold">0</div><span class="small">登録キャラクター</span></div>
+    <div class="panel"><h3>RELATIONSHIPS</h3><div id="countRels" style="font-size:28px;font-weight:bold">0</div><span class="small">登録した関係性</span></div>
+    <div class="panel"><h3>MUSIC</h3><div id="countMusic" style="font-size:28px;font-weight:bold">0</div><span class="small">イメージソング</span></div>
+  </div>
+  <div class="panel"><h3>WELCOME!</h3><p class="small">ここはあなたの創作を保管する場所です。まずはキャラクターを登録してみてね。</p></div>
+  <p class="status" id="saveStatus">このブラウザに自動保存されます。</p>
+</section>
+
+<section id="characters" class="hidden">
+  <h2>★ キャラクター</h2>
+  <div class="actions"><button class="btn primary" id="newChar">＋ キャラクターを追加</button></div>
+  <div id="charForm" class="panel hidden">
+    <h3 id="charFormTitle">新しいキャラクター</h3>
+    <input type="hidden" id="charId">
+    <div class="grid">
+      <div><label>名前 *</label><input id="charName" placeholder="キャラクター名"></div>
+      <div><label>読み方・別名</label><input id="charAlias" placeholder="よみかた / nickname"></div>
+      <div><label>性別</label><input id="charGender" placeholder="例：女 / 男 / 無性"></div>
+      <div><label>年齢</label><input id="charAge" placeholder="例：17歳 / 不明"></div>
+      <div><label>種族</label><input id="charSpecies" placeholder="種族"></div>
+      <div><label>MBTI</label><input id="charMbti" placeholder="例：INFP"></div>
+      <div><label>公開設定（試作品）</label><select id="charPrivacy"><option>自分用</option><option>公開予定</option><option>URL限定予定</option></select></div>
+    </div>
+    <label>プロフィール・設定</label><textarea id="charProfile" placeholder="性格、容姿、過去、好きなものなど"></textarea>
+    <label>自由項目</label><textarea id="charCustom" placeholder="自由に記録できます"></textarea>
+    <div class="actions"><button class="btn primary" id="saveChar">保存</button><button class="btn" id="cancelChar">キャンセル</button></div>
+  </div>
+  <div id="charList"></div>
+</section>
+
+<section id="relations" class="hidden">
+  <h2>★ 関係性</h2>
+  <div class="panel">
+    <h3>関係性を追加</h3>
+    <div class="grid">
+      <div><label>キャラクター A</label><select id="relA"></select></div>
+      <div><label>キャラクター B</label><select id="relB"></select></div>
+    </div>
+    <label>関係性</label><input id="relType" placeholder="例：幼なじみ / 相棒 / 犬猿の仲">
+    <label>メモ</label><textarea id="relMemo" placeholder="二人の関係について"></textarea>
+    <div class="actions"><button class="btn primary" id="saveRel">関係性を登録</button></div>
+  </div>
+  <div id="relList"></div>
+</section>
+
+<section id="music" class="hidden">
+  <h2>★ イメージソング</h2>
+  <div class="panel">
+    <h3>楽曲を追加</h3>
+    <label>関連キャラクター</label><select id="musicChar"></select>
+    <label>曲名 *</label><input id="musicTitle" placeholder="曲名">
+    <label>アーティスト</label><input id="musicArtist" placeholder="アーティスト名">
+    <label>URL</label><input id="musicUrl" type="url" placeholder="https://">
+    <label>メモ</label><textarea id="musicMemo" placeholder="この曲を選んだ理由など"></textarea>
+    <div class="actions"><button class="btn primary" id="saveMusic">楽曲を登録</button></div>
+  </div>
+  <div id="musicList"></div>
+</section>
+
+<section id="settings" class="hidden">
+  <h2>★ 設定・保存</h2>
+  <div class="panel">
+    <h3>デザイン</h3>
+    <label>テーマカラー</label>
+    <select id="theme"><option value="blue">ソーダブルー</option><option value="pink">キャンディピンク</option><option value="purple">ラベンダー</option><option value="green">メロンソーダ</option><option value="mono">モノクロ</option></select>
+    <p class="small">色だけを簡単に変更できます。レイアウトや機能は共通です。</p>
+  </div>
+  <div class="panel">
+    <h3>データのバックアップ</h3>
+    <p class="small">登録したデータをJSONファイルとして保存できます。別の端末に移すときにも使えます。</p>
+    <div class="actions"><button class="btn primary" id="exportData">バックアップを書き出す</button><label class="btn" style="display:inline-block;margin:0">バックアップを読み込む<input id="importData" type="file" accept="application/json" style="display:none"></label></div>
+  </div>
+  <div class="panel">
+    <h3>保存について</h3>
+    <p class="small">この試作品は、現在使っているブラウザ内にデータを保存します。ブラウザのデータ消去や端末変更に備えて、定期的にバックアップしてください。オンライン公開・複数端末同期はまだ実装していません。</p>
+    <div class="status" id="storageStatus">自動保存：有効</div>
+  </div>
+</section>
+</main>
+<footer>PIXEL ARCHIVE　★　YOUR WORLD, YOUR ARCHIVE</footer>
+</div>
+<script>
+const KEY='pixelArchivePrototype_v1';
+let data={characters:[],relations:[],music:[],theme:'blue'};
+const palettes={
+ blue:['#79c9f4','#287ba9','#eaf8ff','#24445b'],
+ pink:['#f3a9cf','#a83e78','#fff0f8','#5d2948'],
+ purple:['#c2a8f4','#6846a8','#f4efff','#3d3158'],
+ green:['#9ad9bd','#32866a','#edfff5','#285442'],
+ mono:['#b7c2c9','#48545c','#f1f3f4','#30383d']
+};
+function load(){try{const x=JSON.parse(localStorage.getItem(KEY));if(x)data={...data,...x}}catch(e){}}
+function persist(){localStorage.setItem(KEY,JSON.stringify(data));document.getElementById('saveStatus').textContent='✓ 自動保存しました';}
+function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function applyTheme(){let p=palettes[data.theme]||palettes.blue;['--main','--deep','--pale','--ink'].forEach((v,i)=>document.documentElement.style.setProperty(v,p[i]));document.getElementById('theme').value=data.theme;}
+function showTab(tab){document.querySelectorAll('main section').forEach(s=>s.classList.toggle('hidden',s.id!==tab));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));if(tab==='relations'||tab==='music')fillCharacterSelects();render();}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+function render(){
+document.getElementById('countChars').textContent=data.characters.length;
+document.getElementById('countRels').textContent=data.relations.length;
+document.getElementById('countMusic').textContent=data.music.length;
+document.getElementById('charList').innerHTML=data.characters.length?data.characters.map(c=>`<div class="item"><div><strong>★ ${esc(c.name)}</strong><p>${esc([c.alias,c.gender,c.age,c.species,c.mbti].filter(Boolean).join(' / '))}</p><span class="pill">${esc(c.privacy||'自分用')}</span></div><div><button onclick="editChar('${c.id}')">編集</button> <button onclick="deleteChar('${c.id}')">削除</button></div></div>`).join(''):'<div class="empty">まだキャラクターがいません ★</div>';
+document.getElementById('relList').innerHTML=data.relations.length?data.relations.map(r=>`<div class="item"><div><strong>${esc(nameOf(r.a))}　↔　${esc(nameOf(r.b))}</strong><p>${esc(r.type)} ${r.memo?' / '+esc(r.memo):''}</p></div><button onclick="deleteRel('${r.id}')">削除</button></div>`).join(''):'<div class="empty">関係性はまだ登録されていません</div>';
+document.getElementById('musicList').innerHTML=data.music.length?data.music.map(m=>`<div class="item"><div><strong>♫ ${esc(m.title)}</strong><p>${esc(nameOf(m.charId))} / ${esc(m.artist)} ${m.memo?' / '+esc(m.memo):''}</p>${m.url?`<a href="${esc(m.url)}" target="_blank" rel="noopener">楽曲リンクを開く</a>`:''}</div><button onclick="deleteMusic('${m.id}')">削除</button></div>`).join(''):'<div class="empty">楽曲はまだ登録されていません</div>';
+fillCharacterSelects();
+}
+function nameOf(id){return data.characters.find(c=>c.id===id)?.name||'（未設定）'}
+function fillCharacterSelects(){['relA','relB','musicChar'].forEach(id=>{let el=document.getElementById(id),old=el.value;el.innerHTML='<option value="">選択してください</option>'+data.characters.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');if([...el.options].some(o=>o.value===old))el.value=old;});}
+function clearCharForm(){['charId','charName','charAlias','charGender','charAge','charSpecies','charMbti','charProfile','charCustom'].forEach(id=>document.getElementById(id).value='');document.getElementById('charPrivacy').value='自分用';}
+document.getElementById('newChar').onclick=()=>{clearCharForm();document.getElementById('charFormTitle').textContent='新しいキャラクター';document.getElementById('charForm').classList.remove('hidden');};
+document.getElementById('cancelChar').onclick=()=>document.getElementById('charForm').classList.add('hidden');
+document.getElementById('saveChar').onclick=()=>{let name=document.getElementById('charName').value.trim();if(!name){alert('名前を入力してください');return;}let id=document.getElementById('charId').value||crypto.randomUUID();let c={id,name,alias:charAlias.value,gender:charGender.value,age:charAge.value,species:charSpecies.value,mbti:charMbti.value,profile:charProfile.value,custom:charCustom.value,privacy:charPrivacy.value};let i=data.characters.findIndex(x=>x.id===id);if(i<0)data.characters.push(c);else data.characters[i]=c;persist();document.getElementById('charForm').classList.add('hidden');render();};
+window.editChar=id=>{let c=data.characters.find(x=>x.id===id);if(!c)return;[['charId','id'],['charName','name'],['charAlias','alias'],['charGender','gender'],['charAge','age'],['charSpecies','species'],['charMbti','mbti'],['charProfile','profile'],['charCustom','custom'],['charPrivacy','privacy']].forEach(([a,b])=>document.getElementById(a).value=c[b]||'');document.getElementById('charFormTitle').textContent='キャラクターを編集';document.getElementById('charForm').classList.remove('hidden');};
+window.deleteChar=id=>{if(!confirm('このキャラクターを削除しますか？関連する関係性・楽曲も削除されます。'))return;data.characters=data.characters.filter(c=>c.id!==id);data.relations=data.relations.filter(r=>r.a!==id&&r.b!==id);data.music=data.music.filter(m=>m.charId!==id);persist();render();};
+document.getElementById('saveRel').onclick=()=>{let a=relA.value,b=relB.value,type=relType.value.trim();if(!a||!b||a===b||!type){alert('別々のキャラクター2人と関係性を入力してください');return;}data.relations.push({id:crypto.randomUUID(),a,b,type,memo:relMemo.value});relType.value='';relMemo.value='';persist();render();};
+window.deleteRel=id=>{data.relations=data.relations.filter(r=>r.id!==id);persist();render();};
+document.getElementById('saveMusic').onclick=()=>{let title=musicTitle.value.trim();if(!title){alert('曲名を入力してください');return;}data.music.push({id:crypto.randomUUID(),charId:musicChar.value,title,artist:musicArtist.value,url:musicUrl.value,memo:musicMemo.value});['musicTitle','musicArtist','musicUrl','musicMemo'].forEach(id=>document.getElementById(id).value='');persist();render();};
+window.deleteMusic=id=>{data.music=data.music.filter(m=>m.id!==id);persist();render();};
+document.getElementById('theme').onchange=e=>{data.theme=e.target.value;applyTheme();persist();};
+document.getElementById('exportData').onclick=()=>{let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pixel-archive-backup.json';a.click();URL.revokeObjectURL(a.href);};
+document.getElementById('importData').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let x=JSON.parse(await f.text());if(!Array.isArray(x.characters)||!Array.isArray(x.relations)||!Array.isArray(x.music))throw Error();if(!confirm('現在のデータを読み込んだ内容に置き換えますか？'))return;data={...data,...x};applyTheme();persist();render();alert('バックアップを読み込みました');}catch(err){alert('読み込めないファイルです');}e.target.value='';};
+load();applyTheme();render();
+</script>
+</body>
+</html>
